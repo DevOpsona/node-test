@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: five-node-test
+    env_file: .env
+    image: matej0506/five-node-test:${TAG}
     ports:
       - "7000:80"
