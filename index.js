@@ -5,7 +5,7 @@ const app = express();
 
 // Respond with "Hello World via Github Actions" for requests that hit our root "/"
 app.get("/", function (req, res) {
- return res.send("Hello Five!");
+ return res.send("Hello Matej!");
 });
 
 // listen to port 7000 by default
