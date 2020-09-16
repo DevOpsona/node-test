@@ -11,6 +11,9 @@ before_script:
   - apk add --no-cache docker-compose
   - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" $CI_REGISTRY --password-stdin
 
+after_script:
+  - docker-compose down -v
+
 test:
   script:
     - export TAG=${CI_COMMIT_SHORT_SHA}
@@ -18,12 +21,15 @@ test:
     - docker-compose exec -T nodejs npm test
     - docker push matej0506/five-node-test:${TAG}
 
-after_script:
-  - docker-compose down -v
-
 deploy:
   stage: deploy
   when: manual
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest  # see the note below
+  variables:
+    CI_AWS_ECS_CLUSTER: five-node-test
+    CI_AWS_ECS_SERVICE: five-node-test
+    CI_AWS_ECS_TASK_DEFINITION: five-node-test:1
+  before_script: []
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-ecs:latest
   script:
-    - aws -h
+    - aws ecs update-service --cluster ${CI_AWS_ECS_CLUSTER} --service ${CI_AWS_ECS_SERVICE} --task-definition ${CI_AWS_ECS_TASK_DEFINITION}
+  after_script: []
