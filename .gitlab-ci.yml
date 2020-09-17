@@ -24,6 +24,9 @@ test:
 deploy:
   stage: deploy
   when: manual
+  only:
+    refs:
+      - master
   variables:
     CI_AWS_ECS_CLUSTER: five-node-test
     CI_AWS_ECS_SERVICE: five-node-test
